@@ -10,6 +10,12 @@ public class Server extends Thread{
     static int j;
     static int serverPort;
     
+     /**
+     * Manages interactions between Client objects.
+     * @param args The port to be used
+     * @throws SocketException
+     * @throws UnknownHostException
+     */
     public static void main(String args[]) throws SocketException, UnknownHostException{   
 
     String username = "Server";
@@ -35,6 +41,7 @@ public class Server extends Thread{
     System.out.println("Port number, "+ serverPort);
 
     }
+    
 
 
 }

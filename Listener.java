@@ -9,26 +9,46 @@ public class Listener implements Runnable {
     private DatagramSocket socket;
     InetAddress sIP;
     int sPort;
+    int j = 0;
     
     
-    public Listener(DatagramSocket s) throws UnknownHostException{ //TO DO: Add another constructor without hardcoding
+    /**
+     * Class constructor specifying Socket
+     * @param s Socket to listen on
+     * @throws UnknownHostException
+     */
+    public Listener(DatagramSocket s) throws UnknownHostException{ 
         socket = s;
         sIP = InetAddress.getByName("127.0.0.1");
         sPort = 7505;
     }
 
-    public Listener(DatagramSocket s, InetAddress serverIP, int serverPort) throws UnknownHostException{ //TO DO: Add another constructor without hardcoding
+    /**
+     * Class constructor specifying Socket, Server IP and Server Port number
+     * @param s Socket to listen on
+     * @param serverIP Server IP Address
+     * @param serverPort Server port number
+     * @throws UnknownHostException
+     */
+    public Listener(DatagramSocket s, InetAddress serverIP, int serverPort) throws UnknownHostException{ 
         socket = s;
         sIP = serverIP;
         sPort = serverPort;
     }
 
-    public Listener(DatagramSocket s, int serverPort) throws UnknownHostException{ //TO DO: Add another constructor without hardcoding
+    /**
+     * Class constructor specifying Socket, and Server Port number
+     * @param s Socket to listen on
+     * @param serverPort Server port number
+     * @throws UnknownHostException
+     */
+    public Listener(DatagramSocket s, int serverPort) throws UnknownHostException{ 
         socket = s;
         sIP = InetAddress.getByName("127.0.0.1");
         sPort = serverPort;
     }
 
+    @Override
     public void run(){
         while(true){
             try {
@@ -41,6 +61,12 @@ public class Listener implements Runnable {
 
     }
 
+    /**
+     * Filter and/or routes messages recieved by the Listener threads
+     * The first 4 "if" statements will only be accessed by the server. 
+     * If the message passes all these checks and gets to the last "else" statement, it is at the destination client.
+     * @throws IOException
+     */
     public void recieve() throws IOException{
         byte[] receivedByte = new byte[1024];
         DatagramPacket receivedPacket = new DatagramPacket(receivedByte, receivedByte.length);
@@ -66,17 +92,22 @@ public class Listener implements Runnable {
             //System.out.println(r);
             String newuser = r.split(" ")[1];
             //System.out.println("String split: "+newuser);
+            //System.out.println(Server.j);
             Server.ClientList[Server.j] = new Clients(newuser, 
             receivedPacket.getAddress(), receivedPacket.getPort());
             //System.out.println("Array at index 0 "+Server.ClientList[0].getName());
             Sender.sendMessage(newuser+" connected to server!", receivedPacket.getAddress(), receivedPacket.getPort());
             Server.j++;
+            //System.out.println(Server.j);
+            
         }
         else if(r.contains("clientrequest")){
             String[] clientrequest = r.split(" ");
             //System.out.println(clientrequest.length);
             //System.out.println(clientrequest[0]+" "+clientrequest[1]+" "+clientrequest[2]);
-            for(int i = 0; i < Server.j+1; i++){
+            int length = Server.j;
+            //System.out.println(length);
+            for(int i = 0; i < length; i++){
                 if((Server.ClientList[i].getName()).compareTo(clientrequest[1]) == 0){
                     Sender.sendMessage(clientrequest[1]+" in system. Connect? (y/n)", receivedPacket.getAddress(), receivedPacket.getPort());
                     //Thread.sleep(1000);
@@ -84,6 +115,7 @@ public class Listener implements Runnable {
                     return;
                 }
             }
+            //return;
         }
         else if(r.contains("connectionrequest ")){
             String[] connectionrequest = r.split(" ");
@@ -110,10 +142,9 @@ public class Listener implements Runnable {
                         Sender.sendMessageRisky(message, Server.ClientList[i].getIP(), 
                         Server.ClientList[i].getPort()); 
                     }
-                    //String sender = message.split(":")[0];
+                    
                     Sender.sendMessage("(Delivered to Server)", receivedPacket.getAddress(), receivedPacket.getPort());
-                    //Sender.sendMessage(sender+"%"+"(Delivered to Server)", sIP, sPort);
-                    //return;
+                    
                     return; 
                 }
   
@@ -124,7 +155,7 @@ public class Listener implements Runnable {
         }
         else{
             System.out.println(r);
-            if(r.contains(": ")){              //   
+            if(r.contains(": ")){                 
                 String csResult;
                 String myCSmessage = "(Sending delivery report...)";
                 
@@ -143,7 +174,7 @@ public class Listener implements Runnable {
                 
             }                                                                       
         }
-        //return;
+        
 
     }    
 

@@ -22,12 +22,25 @@ public class Sender implements Runnable{
         this.senderSocket = senderSocket;
     }
     
+    /**
+     * Class constructor specifying Socket, name, and recipient.
+     * @param senderSocket Socket
+     * @param name Username
+     * @param r Recipient Username
+     */
     public Sender(DatagramSocket senderSocket, String name, String r){
         this.senderSocket = senderSocket;
         this.name = name;
         recipient = r;
     }
 
+    /**
+     * Class constructor specifying Socket, name, recipient and server port.
+     * @param senderSocket Socket
+     * @param name Username
+     * @param r Recipient Username
+     * @param serverPort Server Port number
+     */
     public Sender(DatagramSocket senderSocket, String name, String r, int serverPort){
         this.senderSocket = senderSocket;
         this.name = name;
@@ -35,10 +48,22 @@ public class Sender implements Runnable{
         PORT = serverPort;
     }
 
+    /**
+     * Class constructor specifying Socket and name
+     * @param senderSocket Socket
+     * @param name Username
+     */
     public Sender(DatagramSocket senderSocket, String name){
         this.senderSocket = senderSocket;
         this.name = name;
     }
+
+    /**
+     * Generates a checksum and appends it to the message before sending it through a socket.
+     * @param message The message that will have it's checksum generated, appended and sent
+     * @param IP The IP to be used
+     * @param p The port to be used
+     */
     public static void sendMessage(String message, InetAddress IP, int p) throws IOException { 
         //long csvalue = generateCheckSumValue(message);
         String csmessage = generateCSString(message);//(csvalue + "&&" + message);
@@ -48,6 +73,12 @@ public class Sender implements Runnable{
         senderSocket.send(packet);
     }
 
+     /**
+     * Returns a long object that is the checksum value of the string object parsed.
+     *
+     * @param data The string object that will have it's checksum calculated
+     * @return the checksum of the string object
+     */
     public static long generateCheckSumValue(String data){
         long toReturn;
         byte[] bdata = data.getBytes();
@@ -57,11 +88,25 @@ public class Sender implements Runnable{
         return toReturn;
     }
 
+    /**
+     * Returns a String object that is a concatenation of the object with it's checksum.
+     * @param data The String object to have it's checksum calculated
+     * @return a new String object with the checksum appended
+     */
     public static String generateCSString(String data){
         String toReturn = (generateCheckSumValue(data) + "&&" + data);
         return toReturn;
     }
 
+    /**
+     * Like the normal sendMessage() but with a 10% of causing an error
+     * Errors: 5% chance checksum will fail, 5% chance message won't deliver
+     * Normal sendMessage(): Generates a checksum and appends it to the message before sending it through a socket.
+     * @param message The message that will have it's checksum generated, appended and sent
+     * @param IP The IP to be used
+     * @param p The port to be used
+     * @throws IOException
+     */
     public static void sendMessageRisky(String message, InetAddress IP, int p) throws IOException { 
         
         int portRisky = p;
@@ -94,7 +139,7 @@ public class Sender implements Runnable{
 
     @Override
     public void run() {
-        //BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        
         Scanner input = new Scanner(System.in);
 
         while(true){
