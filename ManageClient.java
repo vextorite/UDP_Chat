@@ -6,6 +6,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ManageClient {
+    /**
+     * Creates a user when run. The user's IP, server's IP, and server's port can be
+     * specified in the arguments. When no arguments are parsed, the defaults are used.
+     *
+     * @param args (Server IP; Server PORT; User(your) PORT)
+     *
+     */   
     public static void main(String[] args) throws IOException, InterruptedException{
         
         ExecutorService pool = Executors.newFixedThreadPool(2);
@@ -15,7 +22,7 @@ public class ManageClient {
         DatagramSocket messageSocket;
         Listener listener;
 
-        //if(args.length == 1 && args[0].compareTo("test")==0){}
+        
         
         if(args.length == 3){
             sIP = InetAddress.getByName(args[0]); //server IP
@@ -77,7 +84,7 @@ public class ManageClient {
         }
         
         System.out.println("Connected. Send messages IF " + recipient + " has also connected to you");
-        //System.out.println("-Connected to " + recipient + ".You can send messages if "+ recipient + " has also connected to you");
+        
         /*
         Start Threads for sending and listening
          */
